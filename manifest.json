@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Siteation",
+  "version": "1.0.0",
+  "description": "Monitors tab navigation and displays integers on badge based on API responses",
+  
+  "permissions": [
+    "tabs",
+    "http://127.0.0.1:8000"
+  ],
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "action": {
+    "default_title": "Siteation"
+  }
+}
