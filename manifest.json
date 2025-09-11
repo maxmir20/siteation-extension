@@ -16,7 +16,7 @@
   },
   
   "action": {
-    "default_title": "Siteation\nSingle click: Add siteation\nDouble click: Copy siteations(github.com only)",
+    "default_title": "Siteation: Cite your sites!\n\nSingle click: Add Siteation\nDouble click: Copy Siteations(github.com only)",
     "default_icon": "images/icon_16.png"
   },
 

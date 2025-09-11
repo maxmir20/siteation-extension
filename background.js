@@ -72,6 +72,8 @@ function updateBadge(integer) {
 
 // Function to handle domain change
 async function handleDomainChange(newDomain) {
+  console.log(`Handling domain change`);
+
   console.log(`Domain changed from ${currentDomain} to ${newDomain}`);
   
   // Reset monitoring state
@@ -94,20 +96,33 @@ async function handleDomainChange(newDomain) {
 
 // Function to handle path change (same domain)
 async function handlePathChange() {
+  console.log(`Handling path change`);
   if (!monitoringEnabled) {
     return;
   }
   
   const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (activeTab && activeTab.url) {
-    const integer = await getSiteationScoreFromAPI();
-    if (integer) {
-      updateBadge(integer);
-      console.log(`Updated badge with integer: ${integer}`);
-    } else {
-      updateBadge(null);
-      console.log('No integer received, cleared badge');
-    }
+  if (!activeTab || !activeTab.url) {
+    return;
+  }
+  console.log(`mad eit to title`);
+
+  const integer = await getSiteationScoreFromAPI();
+  const defaultTitle = await chrome.action.getTitle({});
+  const currentBanner = defaultTitle.split('\n', 1)[0];
+  console.log(`title is now: ${defaultTitle}`);
+
+  if (integer) {
+    siteationScoreBanner = `This Page has been Site-d ${integer} times!`;
+    chrome.action.setTitle({ title: defaultTitle.replace(currentBanner, siteationScoreBanner), tabId: activeTab.id});
+    updateBadge(integer);
+    console.log(`Updated badge with integer: ${integer}`);
+  } else {
+    originalBanner = `Siteation: Cite your sites!`;
+    chrome.action.setTitle({ title: defaultTitle.replace(currentBanner, originalBanner), tabId: activeTab.id});
+    
+    updateBadge(null);
+    console.log('No integer received, cleared badge');
   }
 }
 
