@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Siteation",
   "version": "1.0.0",
-  "description": "Monitors tab navigation and displays integers on badge based on API responses",
+  "description": "Siteation helps you compile a list of references to cite on your Github PRs and lets you see which siteations other users have submitted!",
   
   "permissions": [
     "tabs",

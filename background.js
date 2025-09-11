@@ -64,7 +64,7 @@ async function getSiteationScoreFromAPI() {
 function updateBadge(integer) {
   if (integer && monitoringEnabled) {
     chrome.action.setBadgeText({ text: integer.toString() });
-    chrome.action.setBadgeBackgroundColor({ color: '#4CAF50' }); // Green background
+    chrome.action.setBadgeBackgroundColor({ color: '#ff4500' }); // Vermillion
   } else {
     chrome.action.setBadgeText({ text: '' }); // Clear badge
   }
