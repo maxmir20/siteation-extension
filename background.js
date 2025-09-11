@@ -72,8 +72,6 @@ function updateBadge(integer) {
 
 // Function to handle domain change
 async function handleDomainChange(newDomain) {
-  console.log(`Handling domain change`);
-
   console.log(`Domain changed from ${currentDomain} to ${newDomain}`);
   
   // Reset monitoring state
@@ -96,7 +94,6 @@ async function handleDomainChange(newDomain) {
 
 // Function to handle path change (same domain)
 async function handlePathChange() {
-  console.log(`Handling path change`);
   if (!monitoringEnabled) {
     return;
   }
@@ -105,12 +102,10 @@ async function handlePathChange() {
   if (!activeTab || !activeTab.url) {
     return;
   }
-  console.log(`mad eit to title`);
 
   const integer = await getSiteationScoreFromAPI();
   const defaultTitle = await chrome.action.getTitle({});
   const currentBanner = defaultTitle.split('\n', 1)[0];
-  console.log(`title is now: ${defaultTitle}`);
 
   if (integer) {
     siteationScoreBanner = `This Page has been Site-d ${integer} times!`;
