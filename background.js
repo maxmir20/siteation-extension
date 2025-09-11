@@ -4,6 +4,7 @@
 let currentDomain = null;
 let currentUrl = null;
 let monitoringEnabled = false;
+let clickTimeout = null;
 
 // Utility function to extract domain from URL
 function extractDomain(url) {
@@ -29,7 +30,7 @@ function hasDomainChanged(newUrl) {
 async function checkDomainMonitoring() {
   console.log(`Checking if there are any siteation scoores for this domain`);
   try {
-    const response = await fetch(`http://127.0.0.1:8000/exists/?url=${encodeURIComponent(currentUrl)}`);
+    const response = await fetch(`https://site-ation.onrender.com/exists/?url=${encodeURIComponent(currentUrl)}`);
     if (!response.ok) {
       throw new Error('Failed to retrieve domain check');
     }
@@ -46,7 +47,7 @@ async function checkDomainMonitoring() {
 async function getSiteationScoreFromAPI() {
   console.log(`Getting siteation score for URL: ${currentUrl}`);
   try {
-    const response = await fetch(`http://127.0.0.1:8000/value/?url=${encodeURIComponent(currentUrl)}`);
+    const response = await fetch(`https://site-ation.onrender.com/value/?url=${encodeURIComponent(currentUrl)}`);
     if (!response.ok) {
       throw new Error('Failed to retrieve siteation score');
     }
@@ -63,7 +64,7 @@ async function getSiteationScoreFromAPI() {
 function updateBadge(integer) {
   if (integer && monitoringEnabled) {
     chrome.action.setBadgeText({ text: integer.toString() });
-    chrome.action.setBadgeBackgroundColor({ color: '#4285f4' }); // Blue background
+    chrome.action.setBadgeBackgroundColor({ color: '#ff4500' }); // Vermillion
   } else {
     chrome.action.setBadgeText({ text: '' }); // Clear badge
   }
@@ -144,5 +145,81 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
   }
 });
 
-// Initialize extension
-console.log('Siteation Extension background service worker initialized');
+// Function to add current URL to siteations set
+async function addCurrentUrlToSiteations() {
+  if (!currentUrl) {
+    console.log('No current URL to add');
+    return;
+  }
+  
+  try {
+    // Store current URL as a key in storage
+    await chrome.storage.local.set({ [currentUrl]: true });
+  } catch (error) {
+    console.error('Error adding URL to siteations:', error);
+  }
+}
+
+// Function to format and copy siteations to clipboard
+async function copySiteationsToClipboard() {
+  try {
+    // Get all keys from storage
+    const siteationsUrls = await chrome.storage.local.getKeys();
+    
+    if (siteationsUrls.length === 0) {
+      console.log('No siteations to copy');
+      return;
+    }
+    
+    // Format the text
+    let formattedText = "[Site-ations]\n";
+    siteationsUrls.forEach(url => {
+      formattedText += `- ${url}\n`;
+    });
+    
+    // Check if we're on github.com
+    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const isGithub = activeTab && activeTab.url && activeTab.url.includes('github.com');
+    
+    if (isGithub) {
+      // Use navigator.clipboard on github.com
+      await chrome.scripting.executeScript({
+        target: { tabId: activeTab.id },
+        func: (text) => {
+          navigator.clipboard.writeText(text).catch(err => {
+            console.error('Failed to copy text: ', err);
+          });
+        },
+        args: [formattedText]
+      });
+    } else {
+      // Fallback for non-github.com sites
+      console.log('Not on github.com - clipboard copy not available');
+      return;
+    }
+    
+    // Clear all siteations after copying
+    await chrome.storage.local.clear();
+    
+  } catch (error) {
+    console.error('Error copying siteations to clipboard:', error);
+  }
+}
+
+// Handle extension icon clicks
+chrome.action.onClicked.addListener(async (tab) => {
+  // Clear any existing timeout
+  if (clickTimeout) {
+    clearTimeout(clickTimeout);
+    clickTimeout = null;
+    // This is a double-click
+    await copySiteationsToClipboard();
+  } else {
+    // Set timeout for potential double-click
+    clickTimeout = setTimeout(async () => {
+      // This is a single-click
+      await addCurrentUrlToSiteations();
+      clickTimeout = null;
+    }, 100); // 100ms delay to detect double-click
+  }
+});
