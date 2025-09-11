@@ -5,7 +5,10 @@
   "description": "Monitors tab navigation and displays integers on badge based on API responses",
   
   "permissions": [
-    "tabs"
+    "tabs",
+    "storage",
+    "clipboardWrite",
+    "scripting"
   ],
   
   "background": {
@@ -13,10 +16,19 @@
   },
   
   "action": {
-    "default_title": "Siteation"
+    "default_title": "Siteation\nSingle click: Add siteation\nDouble click: Copy siteations(github.com only)",
+    "default_icon": "images/icon_16.png"
+  },
+
+  "icons": {
+    "16": "images/icon_16.png",
+    "32": "images/icon_32.png",
+    "48": "images/icon_48.png",
+    "128": "images/icon_128.png"
   },
 
   "host_permissions": [
-    "*://127.0.0.1*"
+    "https://site-ation.onrender.com/*",
+    "https://github.com/*"
   ]
 }
