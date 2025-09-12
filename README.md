@@ -27,4 +27,4 @@ Add the Github App to your Repo here:
 - `tabs` - used to fetch current URL and check if the tab changes or we navigate to a new site
 - `storage` - used to hold all URLs we are looking to add as Siteations
 - `clipboardWrite` - used to copy all stored URLS onto the clipboard for easy pasting into a Github PR comment
-- `scripting` - used to enable us to call clipboardWrite while on Github because service_workers are not considered a secure page(See [here](https://github.com/w3c/editing/issues/458) and [here ]([url](https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts)))
+- `scripting` - used to enable us to call clipboardWrite while on `https://github.com` because service_workers are not considered a secure page(See [here](https://github.com/w3c/editing/issues/458) and [here ]([url](https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts)))
