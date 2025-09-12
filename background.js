@@ -121,40 +121,6 @@ async function handlePathChange() {
   }
 }
 
-// Event listeners
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete' && tab.active) {
-    currentUrl = tab.url;
-    const domainCheck = hasDomainChanged(tab.url);
-    
-    if (domainCheck.changed) {
-      handleDomainChange(domainCheck.newDomain);
-    } else if (monitoringEnabled) {
-      // Same domain, different path
-      handlePathChange();
-    }
-  }
-});
-
-chrome.tabs.onActivated.addListener(async (activeInfo) => {
-  try {
-    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (activeTab && activeTab.url) {
-      currentUrl = activeTab.url;
-      const domainCheck = hasDomainChanged(currentUrl);
-      
-      if (domainCheck.changed) {
-        handleDomainChange(domainCheck.newDomain);
-      } else if (monitoringEnabled) {
-        // Same domain, different path
-        handlePathChange();
-      }
-    }
-  } catch (error) {
-    console.error('Error handling tab activation:', error);
-  }
-});
-
 // Function to add current URL to siteations set
 async function addCurrentUrlToSiteations() {
   if (!currentUrl) {
@@ -216,7 +182,40 @@ async function copySiteationsToClipboard() {
   }
 }
 
-// Handle extension icon clicks
+// Event listeners
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status === 'complete' && tab.active) {
+    currentUrl = tab.url;
+    const domainCheck = hasDomainChanged(tab.url);
+    
+    if (domainCheck.changed) {
+      handleDomainChange(domainCheck.newDomain);
+    } else if (monitoringEnabled) {
+      // Same domain, different path
+      handlePathChange();
+    }
+  }
+});
+
+chrome.tabs.onActivated.addListener(async (activeInfo) => {
+  try {
+    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (activeTab && activeTab.url) {
+      currentUrl = activeTab.url;
+      const domainCheck = hasDomainChanged(currentUrl);
+      
+      if (domainCheck.changed) {
+        handleDomainChange(domainCheck.newDomain);
+      } else if (monitoringEnabled) {
+        // Same domain, different path
+        handlePathChange();
+      }
+    }
+  } catch (error) {
+    console.error('Error handling tab activation:', error);
+  }
+});
+
 chrome.action.onClicked.addListener(async (tab) => {
   // Clear any existing timeout
   if (clickTimeout) {
