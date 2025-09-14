@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Siteation",
   "version": "1.0.0",
-  "description": "Siteation helps you compile a list of references to cite on your Github PRs and lets you see which siteations other users have submitted!",
+  "description": "Site-ation shows you which links have helped other developers, while helping you add Site-ations to PRs yourself",
   
   "permissions": [
     "tabs",
