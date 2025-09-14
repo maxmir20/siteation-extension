@@ -64,7 +64,7 @@ async function getSiteationScoreFromAPI() {
 function updateBadge(integer) {
   if (integer && monitoringEnabled) {
     chrome.action.setBadgeText({ text: integer.toString() });
-    chrome.action.setBadgeBackgroundColor({ color: '#ff4500' }); // Vermillion
+    chrome.action.setBadgeBackgroundColor({ color: '#1e3a8a' }); // Darker blue
   } else {
     chrome.action.setBadgeText({ text: '' }); // Clear badge
   }
@@ -85,10 +85,12 @@ async function handleDomainChange(newDomain) {
   
   if (monitoringEnabled) {
     console.log(`Monitoring enabled for domain: ${newDomain}`);
+    chrome.action.setIcon({ path: "images/icon_16_match.png" });
     // Immediately call first API for the current page
     await handlePathChange();
   } else {
     console.log(`Monitoring disabled for domain: ${newDomain}`);
+    chrome.action.setIcon({ path: "images/icon_16.png" });
   }
 }
 
@@ -149,11 +151,11 @@ async function copySiteationsToClipboard() {
     
     // Format the text
     let formattedText = "[Site-ations]\n";
-    siteationsUrls.forEach(url => {
+    siteationsUrls.filter(url => !(url.includes(currentUrl))).forEach(url => {
       formattedText += `- ${url}\n`;
     });
     
-    // Check if we're on github.com
+    // Checks that we're on github.com
     const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
     const isGithub = activeTab && activeTab.url && activeTab.url.includes('github.com');
     
